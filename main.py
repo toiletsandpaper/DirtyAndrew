@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+color = None
+
 
 def viewImage(image):
     cv2.namedWindow('Display', cv2.WINDOW_NORMAL)
@@ -27,7 +29,7 @@ def findColoredCircle(image, picked_color):
         mask2 = cv2.inRange(image, lower2, upper2)
         mask = cv2.bitwise_or(mask1, mask2)
     elif picked_color == "yellow":
-        lower = np.array([25, 40, 0], dtype="uint8")
+        lower = np.array([25, 100, 0], dtype="uint8")
         upper = np.array([35, 255, 255], dtype="uint8")
         mask = cv2.inRange(image, lower, upper)
 
@@ -36,9 +38,11 @@ def findColoredCircle(image, picked_color):
 
     for cont in contours:
         perimeter = cv2.arcLength(cont, True)
-        appox = cv2.approxPolyDP(cont, 0.04 * perimeter, True)
+        appox = cv2.approxPolyDP(cont, 0.043 * perimeter, True)
         if len(appox) > 5:
             cv2.drawContours(original, [cont], -1, (36, 255, 12), -1)
+            global color
+            color = picked_color
 
     cv2.imshow('mask', mask)
     cv2.imshow('original', original)
@@ -50,6 +54,7 @@ def main():
     image = cv2.imread("./images/" + input('image name from ./images/'))
     picked_color = "red" if input("[r]ed or [y]ellow color?: ") == ("r" or "red") else "yellow"
     findColoredCircle(image, picked_color)
+    print(color)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
