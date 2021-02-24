@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 slgj'klhjdl'h
 d'hkdhk
 ;dghk
@@ -8,3 +9,8 @@ efggkj;k
 
 
 d+
+=======
+123
+123
+123
+>>>>>>> 65db043 (123)
