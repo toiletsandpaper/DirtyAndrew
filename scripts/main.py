@@ -1,99 +1,65 @@
-import time
-import cv2
-import numpy as np
+from datetime import datetime, timedelta
+from pymata4 import pymata4
+import sys
+import keyboard
 
-color = None
-cam = cv2.VideoCapture(0, cv2.CAP_DSHOW) #windows only
-
-#cv2.namedWindow("Test")
-
-def viewImage(image):
-    cv2.namedWindow('Display', cv2.WINDOW_NORMAL)
-    cv2.imshow('Display', image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+HALL_PINS = [22, 24, 26, 28]
+DRIVER_PINS = [6, 7]
 
 
-def findColoredCircle(image, picked_color):
-    #image = cv2.imread('./images/lol.png')
-    original = image.copy()
-    viewImage(original)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    #blurred = cv2.medianBlur(gray, 25)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    # print(image)
-    # lower = np.array([60, 40, 0], dtype="uint8")
-    # upper = np.array([80, 255, 232], dtype="uint8")
-    if picked_color == "red":
-        lower1 = np.array([0, 40, 50], dtype="uint8")
-        upper1 = np.array([10, 255, 255], dtype="uint8")
-        lower2 = np.array([175, 40, 50], dtype="uint8")
-        upper2 = np.array([180, 255, 255], dtype="uint8")
-
-        mask1 = cv2.inRange(image, lower1, upper1)
-        mask2 = cv2.inRange(image, lower2, upper2)
-        mask = cv2.bitwise_or(mask1, mask2)
-    elif picked_color == "yellow":
-        lower = np.array([20, 30, 200], dtype="uint8")
-        upper = np.array([35, 255, 255], dtype="uint8")
-        mask = cv2.inRange(image, lower, upper)
-
-    minDist = 100
-    param1 = 30  # 500
-    param2 = 30  # 200 #smaller value-> more false circles
-    minRadius = 5
-    maxRadius = 200  # 10
-    blurred = cv2.medianBlur(mask, 25)
-    circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, minDist, param1=param1, param2=param2,
-                               minRadius=minRadius, maxRadius=maxRadius)
-    cv2.imshow("blur", blurred)
-    if circles is not None:
-        circles = np.uint16(np.around(circles))
-        for i in circles[0, :]:
-            cv2.circle(original, (i[0], i[1]), i[2], (0, 255, 0), 2)
-            global color
-            color = picked_color
-
-    # contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # contours = contours[0] if len(contours) == 2 else contours[1]
-    #
-    # for cont in contours:
-    #     perimeter = cv2.arcLength(cont, True)
-    #     appox = cv2.approxPolyDP(cont, 0.04 * perimeter, True)
-    #     if len(appox) > 5:
-    #         cv2.drawContours(original, [cont], -1, (36, 255, 12), -1)
-    #         global color
-    #         color = picked_color
-
-    #cv2.imshow('Test', original)
-    cv2.imshow('mask', mask)
-    cv2.imshow('original', original)
+def setup_all_drivers(my_board):
+    my_board.set_pin_mode_pwm_output(DRIVER_PINS[0])
+    my_board.set_pin_mode_pwm_output(DRIVER_PINS[1])
 
 
-def recognizeFromFile():
-    global image, lower, upper
-    image = cv2.imread("./images/" + input('image name from ./images/'))
-    picked_color = "red" if input("[r]ed or [y]ellow color?: ") == ("r" or "red") else "yellow"
-    findColoredCircle(image, picked_color)
-    print(color)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+def move_driver(my_board, direction, speed):  # TODO: add speed and direction
+    value_right = 0
+    value_left = 0
+    if direction == 'left':
+        value_left = 1
+    elif direction == 'right':
+        value_right = 1
+    my_board.pwm_write(DRIVER_PINS[0], value_left * speed)
+    my_board.pwm_write(DRIVER_PINS[1], value_right * speed)
 
-def recongnizeFromWebcamera():
-    #picked_color = "red" if input("[r]ed or [y]ellow color?: ") == ("r" or "red") else "yellow"
-    picked_color = "red"
-    #while True:
-    ret, frame = cam.read()
-    if not ret:
-        print("failed to grab frame")
-        #break
-    findColoredCircle(frame, picked_color)
-    cv2.waitKey(0)
-    #time.sleep(6)
 
+def stop_driver(my_board):
+    my_board.pwm_write(DRIVER_PINS[0], 0)
+    my_board.pwm_write(DRIVER_PINS[1], 0)
+
+
+# def setup_all_hall(board)
+
+def is_hall_active(my_board, hall_index):
+    my_board.set_pin_mode_digital_input(HALL_PINS[hall_index])
+    print(my_board.digital_read(HALL_PINS[hall_index]))
+    value, time_stamp = my_board.digital_read(HALL_PINS[hall_index])
+    # print(not value)
+    return not value
 
 
 if __name__ == "__main__":
-    recongnizeFromWebcamera()
-    #recognizeFromFile()
-    print(color)
+    board = pymata4.Pymata4()
+    setup_all_drivers(board)
+    # timer = datetime.now()
+    # deltatime = 0
+
+    while True:
+        # deltatime = (deltatime + (datetime.now() - timer).total_seconds())
+        # timer = datetime.now()
+
+        if keyboard.is_pressed('d'):
+            move_driver(board, 'right', 255)
+        if keyboard.is_pressed('a'):
+            move_driver(board, 'left', 50)
+        if keyboard.is_pressed('s'):
+            stop_driver(board)
+            board.shutdown()
+            sys.exit()
+        if keyboard.is_pressed('spacebar'):
+            stop_driver(board)
+
+    # if deltatime > .5:
+    #    deltatime = 0
+    #   if is_hall_active(board, hall_index = 0):
+    #      stop_driver(board)
