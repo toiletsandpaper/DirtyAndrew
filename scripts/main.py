@@ -5,18 +5,11 @@ import keyboard
 from evdev import InputDevice, categorize, ecodes, KeyEvent
 
 
-
-
-
-
-
-
-
 gamepad = InputDevice('/dev/input/event0')
 HALL_PINS = [22, 24, 26, 28]
-DRIVER_1_PINS = [8, 9]
-DRIVER_2_PINS = [10, 11]
-DRIVER_3_PINS = [12, 13]
+DRIVER_1_PINS = [3, 8]   # left
+DRIVER_2_PINS = [2, 9]   # right
+DRIVER_3_PINS = [12, 13] # elevator
 
 
 def setup_all_drivers(my_board):
@@ -29,32 +22,34 @@ def setup_all_drivers(my_board):
     print('Drivers setted up')
 
 
-def move_driver(my_board, driver_number, direction, speed):  # TODO: add speed and direction
+def move_driver(my_board, driver_name, direction, speed):  # TODO: add speed and direction
     value_right = 0
     value_left = 0
     if direction == 'left':
         value_left = 1
     elif direction == 'right':
         value_right = 1
-    if driver_number == 1:
+    if driver_name == 'left_driver':
         my_board.pwm_write(DRIVER_1_PINS[0], value_left * speed)
         my_board.pwm_write(DRIVER_1_PINS[1], value_right * speed)
-    if driver_number == 2:
+    if driver_name == 'right_driver':
         my_board.pwm_write(DRIVER_2_PINS[0], value_left * speed)
-        my_board.pwm_write(DRIVER_2_PINS[0], value_left * speed)
-    if driver_number == 3:
+        my_board.pwm_write(DRIVER_2_PINS[1], value_right * speed)
+    if driver_name == 'elevator_driver':
         my_board.pwm_write(DRIVER_3_PINS[0], value_left * speed)
-        my_board.pwm_write(DRIVER_3_PINS[0], value_left * speed)
+        my_board.pwm_write(DRIVER_3_PINS[1], value_right * speed)
 
 
-def stop_driver(my_board, driver_number):
-    if driver_number == 1:
+def stop_driver(my_board, driver_name):
+    if driver_name == 'left_driver':
         my_board.pwm_write(DRIVER_1_PINS[0], 0)
         my_board.pwm_write(DRIVER_1_PINS[1], 0)
-    if driver_number == 2:
+        print('left driver moved')
+    if driver_name == 'right_driver':
         my_board.pwm_write(DRIVER_2_PINS[0], 0)
         my_board.pwm_write(DRIVER_2_PINS[1], 0)
-    if driver_number == 3:
+        print('right driver moved')
+    if driver_name == 'elevator_driver':
         my_board.pwm_write(DRIVER_3_PINS[0], 0)
         my_board.pwm_write(DRIVER_3_PINS[1], 0)
 
@@ -91,16 +86,16 @@ if __name__ == "__main__":
             # timer = datetime.now()
             if keyevent.scancode == 306:
                 if event.value == 1:
-                    move_driver(board, 1 ,'right', 255)
+                    move_driver(board, 'right_driver' ,'right', 255)
                 if event.value == 0:
-                   stop_driver(board, 1)
+                   stop_driver(board, 'right_driver')
             if keyevent.scancode == 304:
                 if event.value == 1:
-                    move_driver(board, 1, 'left', 50)
+                    move_driver(board, 'left_driver', 'left', 255)
                 if event.value == 0:
-                   stop_driver(board, 1)
+                   stop_driver(board, 'left_driver')
             if keyevent.scancode == 307:
-                stop_driver(board, 1)
+                stop_all_drivers(board)
                 board.shutdown()
                 sys.exit()
             if keyevent.scancode == 305:
