@@ -115,6 +115,19 @@ if __name__ == "__main__":
                     move_driver(board, 'left_driver', 'left' if not altY else 'right', speed)
                 if event.value == 0:
                    stop_driver(board, 'left_driver')
+            #alt_left
+            if keyevent.scancode == 310:
+                if event.value == 1:
+                    move_driver(board, 'left_driver', 'right', speed)
+                if event.value == 0:
+                   stop_driver(board, 'left_driver')
+            #alt_right
+            if keyevent.scancode == 311:
+                if event.value == 1:
+                    move_driver(board, 'right_driver', 'left', speed)
+                if event.value == 0:
+                   stop_driver(board, 'right_driver')    
+                
             #stop system
             if keyevent.scancode == 313:
                 stop_all_drivers(board)
