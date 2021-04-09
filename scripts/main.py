@@ -64,15 +64,15 @@ def stop_all_drivers(my_board):
 
 def servo_left(my_board, pin):
     my_board.set_pin_mode_servo(pin)
-    my_board.servo_write(pin, 45)
+    my_board.servo_write(pin, 0)
 
 def servo_right(my_board, pin):
     my_board.set_pin_mode_servo(pin)
-    my_board.servo_write(pin, 135)
+    my_board.servo_write(pin, 179)
 
 def servo_stop(my_board, pin):
     my_board.set_pin_mode_servo(pin)
-    my_board.servo_write(pin, 90)
+    my_board.servo_write(pin, 88)
 
 
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
             if keyevent.scancode == 313:
                 stop_all_drivers(board)
                 board.shutdown()
-                sys.exit()
+                exit() #stopping script
             if keyevent.scancode == 304:
                 if event.value == 1:
                     servo_right(board, 4)
@@ -129,20 +129,20 @@ if __name__ == "__main__":
                 stop_all_drivers(board)
         if event.type == ecodes.EV_ABS:
             absevent = categorize(event)
-            if event.code ==17:
+            if event.code == 17:
                 if event.value == -1:
-                    move_driver(board, 'elevator_driver', 'right', 255)
+                    move_driver(board, 'elevator_driver', 'right', speed)
                 if event.value == 1:
-                    move_driver(board, 'elevator_driver', 'left', 255)
+                    move_driver(board, 'elevator_driver', 'left', speed)
                 if event.value == 0:
                     stop_driver(board, 'elevator_driver')
-            if event.code ==16:
+            if event.code == 16:
                 if event.value == 1:
                     servo_right(board, 44)
                 if event.value == -1:
                     servo_left(board, 44)
                 if event.value == 0:
-                    servo_stop(board, 44)       
+                    servo_stop(board, 44)
                 
 
         # if deltatime > .5:
