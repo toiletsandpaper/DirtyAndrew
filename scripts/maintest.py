@@ -99,6 +99,8 @@ if __name__ == "__main__":
             if event.value == 1 and i == False :
                 if keyevent.scancode == 306:
                     move_driver(board, 'right_driver', 'right', 255)
+                    if event.value == 0:
+                        stop_driver(board, 'right_driver')
                     print('B')
                 elif keyevent.scancode == 307:
                     print('Y')
@@ -108,6 +110,8 @@ if __name__ == "__main__":
                     print('A')
                 elif keyevent.scancode == 304:
                     move_driver(board, 'left_driver', 'left', 255)
+                    if event.value == 0:
+                        stop_driver(board, 'right_driver')
                     print('X')
                 elif event.code == 308:
                     print('L1')
