@@ -61,6 +61,18 @@ def stop_all_drivers(my_board):
         my_board.pwm_write(DRIVER_3_PINS[0], 0)
         my_board.pwm_write(DRIVER_3_PINS[1], 0)
 
+def servo_left(my_board, pin):
+    my_board.set_pin_mode_servo(pin)
+    my_board.servo_write(pin, 45)
+
+def servo_right(my_board, pin):
+    my_board.set_pin_mode_servo(pin)
+    my_board.servo_write(pin, 135)
+
+def servo_stop(my_board, pin)
+    my_board.set_pin_mode_servo(pin)
+    my_board.servo_write(pin, 90)
+
 
 
 # def setup_all_hall(board)
