@@ -99,26 +99,32 @@ if __name__ == "__main__":
             keyevent = categorize(event)
             # deltatime = (deltatime + (datetime.now() - timer).total_seconds())
             # timer = datetime.now()
+            
+            #alternate move
             if keyevent.scancode == 307:
                 altY = True if event.value == 1 else False
-            if keyevent.scancode == 306: # right
+            #right
+            if keyevent.scancode == 309: # right
                 if event.value == 1:
                     move_driver(board, 'right_driver' , 'right' if not altY else 'left', speed)
                 if event.value == 0:
                    stop_driver(board, 'right_driver')
-            if keyevent.scancode == 304: # left
+            #left
+            if keyevent.scancode == 308: # left
                 if event.value == 1:
                     move_driver(board, 'left_driver', 'left' if not altY else 'right', speed)
                 if event.value == 0:
                    stop_driver(board, 'left_driver')
+            #stop system
             if keyevent.scancode == 313:
                 stop_all_drivers(board)
                 board.shutdown()
                 sys.exit()
-            if keyevent.scancode == 308:
-                servo_right(board, 4)
-            if keyevent.scancode == 309:
-                servo_stop(board, 4)    
+            if keyevent.scancode == 304:
+                if event.value == 1:
+                    servo_right(board, 4)
+                if event.value == 0:
+                    servo_stop(board, 4)
             if keyevent.scancode == 305:
                 stop_all_drivers(board)
                 
