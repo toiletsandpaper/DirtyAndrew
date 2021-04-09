@@ -115,8 +115,13 @@ if __name__ == "__main__":
                 stop_all_drivers(board)
                 board.shutdown()
                 sys.exit()
+            if keyevent.scancode == 308:
+                servo_right(board, 4)
+            if keyevent.scancode == 309:
+                servo_stop(board, 4)    
             if keyevent.scancode == 305:
                 stop_all_drivers(board)
+                
 
         # if deltatime > .5:
         #    deltatime = 0
