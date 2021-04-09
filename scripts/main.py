@@ -89,6 +89,8 @@ def is_hall_active(my_board, hall_index):
 if __name__ == "__main__":
     board = pymata4.Pymata4()
     setup_all_drivers(board)
+    speed = 255
+    altY = False
     # timer = datetime.now()
     # deltatime = 0
 
@@ -97,17 +99,19 @@ if __name__ == "__main__":
             keyevent = categorize(event)
             # deltatime = (deltatime + (datetime.now() - timer).total_seconds())
             # timer = datetime.now()
+            if keyevent.scancode == 307:
+                altY = True if event.value == 1 else False
             if keyevent.scancode == 306: # B
                 if event.value == 1:
-                    move_driver(board, 'right_driver' ,'right', 255)
+                    move_driver(board, 'right_driver' , 'right' if not altY else 'left', speed)
                 if event.value == 0:
                    stop_driver(board, 'right_driver')
             if keyevent.scancode == 304: # X
                 if event.value == 1:
-                    move_driver(board, 'left_driver', 'left', 255)
+                    move_driver(board, 'left_driver', 'left' if not altY else 'right', speed)
                 if event.value == 0:
                    stop_driver(board, 'left_driver')
-            if keyevent.scancode == 307:
+            if keyevent.scancode == 313:
                 stop_all_drivers(board)
                 board.shutdown()
                 sys.exit()
