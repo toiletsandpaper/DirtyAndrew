@@ -78,6 +78,10 @@ def servo_stop(my_board, pin):
     my_board.set_pin_mode_servo(pin)
     my_board.servo_write(pin, 88)
 
+def angular_servo_move(my_board, servo_pin, angle):
+    my_board.set_pin_mode_servo(servo_pin)
+    my_board.servo_write(servo_pin, angle)
+
 
 
 # def setup_all_hall(board)
@@ -162,11 +166,20 @@ if __name__ == "__main__":
                     stop_driver(board, 'elevator_driver')
             if event.code == 16:
                 if event.value == 1:
-                    servo_right(board, ELEVATOR_SERVO_PIN if not altY else HAND_SERVO_PIN)
+                    if altY:
+                        angular_servo_move(board, HAND_SERVO_PIN, 180)
+                    else:
+                        servo_right(board, ELEVATOR_SERVO_PIN)
                 if event.value == -1:
-                    servo_left(board, ELEVATOR_SERVO_PIN if not altY else HAND_SERVO_PIN)
+                    if altY:
+                        angular_servo_move(board, HAND_SERVO_PIN, 0)
+                    else:
+                        servo_left(board, ELEVATOR_SERVO_PIN)
                 if event.value == 0:
-                    servo_stop(board, ELEVATOR_SERVO_PIN if not altY else HAND_SERVO_PIN)
+                    if altY:
+                        angular_servo_move(board, HAND_SERVO_PIN, 90)
+                    else:
+                        servo_stop(board, ELEVATOR_SERVO_PIN)
                 
 
         # if deltatime > .5:
