@@ -10,6 +10,10 @@ HALL_PINS = [22, 24, 26, 28]
 DRIVER_1_PINS = [7, 8]   # left
 DRIVER_2_PINS = [9, 10]   # right
 DRIVER_3_PINS = [5, 6] # elevator
+ELEVATOR_SERVO_PIN = 11
+LOWER_BOX_SERVO_PIN = 4
+UPPER_BOX_SERVO_PIN = 3
+HAND_SERVO_PIN = 2
 
 
 def setup_all_drivers(my_board):
@@ -126,20 +130,27 @@ if __name__ == "__main__":
                 if event.value == 1:
                     move_driver(board, 'right_driver', 'left', speed)
                 if event.value == 0:
-                   stop_driver(board, 'right_driver')    
-                
+                   stop_driver(board, 'right_driver')
+             
             #stop system
             if keyevent.scancode == 313:
                 stop_all_drivers(board)
                 board.shutdown()
                 exit() #stopping script
-            if keyevent.scancode == 304:
-                if event.value == 1:
-                    servo_right(board, 4)
-                if event.value == 0:
-                    servo_stop(board, 4)
+             
+             #servo control
+            if keyevent.scancode == 304: # X
+               if event.value == 1:
+                   servo_right(board, LOWER_BOX_SERVO_PIN)
+               if event.value == 0:
+                   servo_stop(board, LOWER_BOX_SERVO_PIN)
+            if keyevent.scancode == 306: # B
+               if event.value == 1:
+                   servo_right(board, UPPER_BOX_SERVO_PIN)
+               if event.value == 0:
+                   servo_stop(board, UPPER_BOX_SERVO_PIN)
             if keyevent.scancode == 305:
-                stop_all_drivers(board)
+               stop_all_drivers(board)
         if event.type == ecodes.EV_ABS:
             absevent = categorize(event)
             if event.code == 17:
@@ -151,11 +162,11 @@ if __name__ == "__main__":
                     stop_driver(board, 'elevator_driver')
             if event.code == 16:
                 if event.value == 1:
-                    servo_right(board, 44)
+                    servo_right(board, ELEVATOR_SERVO_PIN if not altY else HAND_SERVO_PIN)
                 if event.value == -1:
-                    servo_left(board, 44)
+                    servo_left(board, ELEVATOR_SERVO_PIN if not altY else HAND_SERVO_PIN)
                 if event.value == 0:
-                    servo_stop(board, 44)
+                    servo_stop(board, ELEVATOR_SERVO_PIN if not altY else HAND_SERVO_PIN)
                 
 
         # if deltatime > .5:
