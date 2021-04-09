@@ -124,7 +124,14 @@ if __name__ == "__main__":
                 if event.value == 1:
                     move_driver(board, 'elevator_driver', 'left', 255)
                 if event.value == 0:
-                    stop_driver(board, 'elevator_driver')    
+                    stop_driver(board, 'elevator_driver')
+            if event.code ==16:
+                if event.value == 1:
+                    servo_right(board, 44)
+                if event.value == -1:
+                    servo_left(board, 44)
+                if event.value == 0:
+                    servo_stop(board, 44)       
                 
 
         # if deltatime > .5:
