@@ -116,6 +116,15 @@ if __name__ == "__main__":
                 servo_stop(board, 4)    
             if keyevent.scancode == 305:
                 stop_all_drivers(board)
+        if event.type == ecodes.EV_ABS:
+            absevent = categorize(event)
+            if event.code ==17:
+                if event.value == -1:
+                    move_driver(board, 'elevator_driver', 'right', 255)
+                if event.value == 1:
+                    move_driver(board, 'elevator_driver', 'left', 255)
+                if event.value == 0:
+                    stop_driver(board, 'elevator_driver')    
                 
 
         # if deltatime > .5:
