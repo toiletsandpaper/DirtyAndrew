@@ -7,9 +7,9 @@ from evdev import InputDevice, categorize, ecodes, KeyEvent
 
 gamepad = InputDevice('/dev/input/event0')
 HALL_PINS = [22, 24, 26, 28]
-DRIVER_1_PINS = [3, 8]   # left
-DRIVER_2_PINS = [2, 9]   # right
-DRIVER_3_PINS = [12, 13] # elevator
+DRIVER_1_PINS = [7, 8]   # left
+DRIVER_2_PINS = [9, 10]   # right
+DRIVER_3_PINS = [5, 6] # elevator
 
 
 def setup_all_drivers(my_board):
@@ -52,6 +52,7 @@ def stop_driver(my_board, driver_name):
     if driver_name == 'elevator_driver':
         my_board.pwm_write(DRIVER_3_PINS[0], 0)
         my_board.pwm_write(DRIVER_3_PINS[1], 0)
+        print('elevator driver moved')
 
 def stop_all_drivers(my_board):
         my_board.pwm_write(DRIVER_1_PINS[0], 0)
@@ -69,7 +70,7 @@ def servo_right(my_board, pin):
     my_board.set_pin_mode_servo(pin)
     my_board.servo_write(pin, 135)
 
-def servo_stop(my_board, pin)
+def servo_stop(my_board, pin):
     my_board.set_pin_mode_servo(pin)
     my_board.servo_write(pin, 90)
 
@@ -96,12 +97,12 @@ if __name__ == "__main__":
             keyevent = categorize(event)
             # deltatime = (deltatime + (datetime.now() - timer).total_seconds())
             # timer = datetime.now()
-            if keyevent.scancode == 306:
+            if keyevent.scancode == 306: # B
                 if event.value == 1:
                     move_driver(board, 'right_driver' ,'right', 255)
                 if event.value == 0:
                    stop_driver(board, 'right_driver')
-            if keyevent.scancode == 304:
+            if keyevent.scancode == 304: # X
                 if event.value == 1:
                     move_driver(board, 'left_driver', 'left', 255)
                 if event.value == 0:

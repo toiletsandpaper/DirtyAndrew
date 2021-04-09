@@ -7,9 +7,9 @@ from evdev import InputDevice, categorize, ecodes, KeyEvent
 
 gamepad = InputDevice('/dev/input/event0')
 HALL_PINS = [22, 24, 26, 28]
-DRIVER_1_PINS = [3, 8]   # left
-DRIVER_2_PINS = [2, 9]   # right
-DRIVER_3_PINS = [12, 13] # elevator
+DRIVER_1_PINS = [7, 8]   # left
+DRIVER_2_PINS = [9, 10]   # right
+DRIVER_3_PINS = [5, 6] # elevator
 
 
 def setup_all_drivers(my_board):
@@ -69,7 +69,7 @@ def servo_right(my_board, pin):
     my_board.set_pin_mode_servo(pin)
     my_board.servo_write(pin, 135)
 
-def servo_stop(my_board, pin)
+def servo_stop(my_board, pin):
     my_board.set_pin_mode_servo(pin)
     my_board.servo_write(pin, 90)
 
